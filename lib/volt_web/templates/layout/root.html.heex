@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="csrf-token" content={csrf_token_value()}>
+    <%= live_title_tag assigns[:page_title] || "Volt", suffix: " · Phoenix Framework" %>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
+    <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
+  </head>
+  <body>
+    <div class="hero">
+      <nav>
+        <h2 class="logo">Volt<span>Food</span></h2>
+        <ul>
+          <li><%= link "Home", to: Routes.page_path(@conn, :index)%></li>
+          <%= if @conn.assigns.current_user do %>
+            <%= if @conn.assigns.current_user.role == "Courier" do %>
+              <li><%= link "Available orders", to: Routes.courier_path(@conn, :address_selection)%></li>
+              <li class="list-member"><%= link "My Orders", to: Routes.courier_path(@conn, :orders_index)%></li>
+              <li><%= link "My Profile", to: Routes.courier_profile_path(@conn, :index) %></li>
+            <% end %>
+            <%= if @conn.assigns.current_user.role == "Customer" do %>
+               <li><%= link "Restaurants", to: Routes.restaurantlists_path(@conn, :index)%></li>
+              <li class="list-member"><%= link "My Orders", to: Routes.customer_path(@conn, :orders_index)%></li>
+              <li><%= link "My Profile", to: Routes.customer_profile_path(@conn, :index) %></li>
+            <% end %>
+            <%= if @conn.assigns.current_user.role == "Restaurant" do %>
+              <li class="list-member"><%= link "My Orders", to: Routes.restaurant_path(@conn, :ordersIndex)%></li>
+              <li><%= link "My Profile", to: Routes.restaurant_profile_path(@conn, :index) %></li>
+
+              <li><%= link "My Menu", to: Routes.restaurant_path(@conn, :menuIndex, @conn.assigns.current_user.id), id: "menu" %></li>
+            <% end %>
+            <li><%= link "Log out", to: Routes.session_path(@conn, :delete), method: :delete  %></li>
+          <% else %>
+            <li><%= link "Sign in", to: Routes.session_path(@conn, :new) %></li>
+            <li><%= link "Register", to: Routes.auth_path(@conn, :index) %></li>
+          <% end %>
+        </ul>
+      </nav>
+    </div>
+
+
+    <%= @inner_content %>
+  </body>
+
+  <style>
+
+    body {
+      margin: 0px;
+    }
+
+
+
+    .hero {
+      height: 10vh;
+      width: 100%;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
+      background-size: cover;
+      background-position: center;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      padding-left: 10%;
+      padding-right: 10%;
+    }
+    .logo {
+      color: white;
+      font-size: 28px;
+    }
+    span {
+      color: #ffc000;
+    }
+    nav ul li {
+      list-style-type: none;
+      display: inline-block;
+      padding: 10px 3px;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 3px 12px;
+      transition: .3s;
+    }
+    nav ul li a:hover {
+      color: black;
+      background-color: white;
+      border-radius: 10px;
+    }
+  </style>
+
+</html>

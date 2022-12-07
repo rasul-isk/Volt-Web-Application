@@ -1,0 +1,84 @@
+<%= form_for @conn, Routes.courier_path(@conn, :update, @conn.assigns.current_user.id), fn courier -> %>
+  <div class="register-container">
+    <h2 class="register-heading">Update Courier Info</h2>
+    <div class="border"></div>
+    <div hidden id = "content-for-js"><%= @conn.assigns.current_user.status %></div>
+
+    <div class="form-group">
+      <%= label courier, :name, class: "control-label" %>
+      <%= text_input courier, :name, value: "#{@conn.assigns.current_user.name}", id: "name", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= label courier, :email, class: "control-label" %>
+      <%= email_input courier, :email, value: "#{@conn.assigns.current_user.email}", id: "email", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= label courier, :revenue, class: "control-label" %>
+      <%= number_input courier, :revenue, step: "0.0001", value: "#{@conn.assigns.current_user.revenue}", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div hidden class="form-group">
+      <%= label courier, :likes, class: "control-label" %>
+      <%= number_input courier, :likes, value: "#{@conn.assigns.current_user.likes}", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div hidden class="form-group">
+      <%= label courier, :dislikes, class: "control-label" %>
+      <%= number_input courier, :dislikes, value: "#{@conn.assigns.current_user.dislikes}", readonly: "readonly", class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+        <div class="form-group">
+          <%= label courier, "Available", class: "control-label" %>
+          <%= radio_button courier, "status", "Available", id: "Available-radio-button"%>
+        </div>
+        <div class="form-group">
+          <%= label courier, "Off duty", class: "control-label" %>
+          <%= radio_button courier, "status", "Off duty", id: "Off-radio-button" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= label courier, :role, class: "control-label" %>
+      <%= text_input courier, :role, value: "Courier", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= submit "Update information", id: "submit_button", class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  let information = document.getElementById("content-for-js").innerText
+  if(information == "Available")
+  {
+    document.getElementById("Available-radio-button").click();
+  }
+  else {
+    document.getElementById("Off-radio-button").click();
+  }
+</script>
+
+  <style>
+  .container {
+    max-width: 80rem;
+  }
+
+  ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: grey;
+  }
+  label {
+    color: black;
+  }
+  input {
+    color: black;
+  }
+  .register-container{
+    margin-top: 100px;
+  }
+  .border {
+    width: 70px;
+    height: 5px;
+    background-color: #ffc000;
+    margin-top: -15px;
+    margin-bottom: 20px;
+  }
+  </style>

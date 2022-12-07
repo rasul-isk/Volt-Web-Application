@@ -1,0 +1,88 @@
+<h3 style="margin-top: 30px;">Total Revenue</h3>
+<h4> <%= @total_revenue %> Euro</h4>
+<%= if @ongoing_orders != [] do %>
+    <h3 style="margin-top: 30px;">Ongoing Orders</h3>
+    <div class="border"><div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                <th>Restaurant</th>
+                <th>Customer</th>
+                <th>Delivery Fee</th>
+                <th>Delivery Address</th>
+                <th>Order Status</th>
+                <th>Order Preparation Time</th>
+                <th>Estimated Delivery Time</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%= for ongoing_order <- @ongoing_orders do %>
+                    <tr>
+                        <td><%= ongoing_order.restaurants.name %></td>
+                        <td><%= ongoing_order.customers.name %></td>
+                        <td><%= ongoing_order.deliveryFee %></td>
+                        <td><%= ongoing_order.addressTo %></td>
+                        <td>
+                            <%= if ongoing_order.orderRestaurantStatus == "in-process" do %>
+                                <p style="color: orange; margin-top: 23px;"><%= ongoing_order.orderRestaurantStatus %></p>
+                            <% end %>
+                            <%= if ongoing_order.orderRestaurantStatus == "prepared" do %>
+                                <p style="color: green; margin-top: 23px;"><%= ongoing_order.orderRestaurantStatus %></p>
+                            <% end %>
+                        </td>
+                        <td><%= ongoing_order.restaurantPreparationTime %></td>
+                        <td><%= ongoing_order.deliveryTime %></td>
+                        <td>
+                            <%= form_for @conn, Routes.courier_path(@conn, :complete_order, ongoing_order.id), [as: :session], fn session -> %>
+                                <div class="form-group">
+                                    <%= submit "Finish order", style: "margin-top: 20px", id: "submit_button", class: "btn btn-primary" %>
+                                </div>
+
+                            <% end %>
+                        </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+<% end %>
+
+<%= if @completed_orders != [] do %>
+    <h3 style="margin-top: 30px;">Completed Orders</h3>
+    <div class="border"><div>
+    <div>
+        <table>
+        <thead>
+            <tr>
+                <th>Restaurant</th>
+                <th>Customer</th>
+                <th>Delivery Fee</th>
+                <th>Delivery Address</th>
+                <th>Order made</th>
+                <th>Order ready time</th>
+                <th>Order delivery time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= for completed_orders <- @completed_orders do %>
+                <tr>
+                    <td><%= completed_orders.restaurants.name %></td>
+                    <td><%= completed_orders.customers.name %></td>
+                    <td><%= completed_orders.deliveryFee %></td>
+                    <td><%= completed_orders.addressTo %></td>
+                    <td><%= completed_orders.orderTimeMade %></td>
+                    <th><%= completed_orders.restaurantPreparationTime %></th>
+                    <th><%= completed_orders.updated_at %></th>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+    </div>
+<% end %>
+
+<style>
+
+
+</style>

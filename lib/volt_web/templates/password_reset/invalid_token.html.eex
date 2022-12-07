@@ -1,0 +1,8 @@
+<h1>Invalid Password Rest Token</h1>
+<%= link "Request new one", to: Routes.password_reset_path(@conn, :new) %>
+
+<style>
+  .container {
+    max-width: 80rem;
+  }
+</style>

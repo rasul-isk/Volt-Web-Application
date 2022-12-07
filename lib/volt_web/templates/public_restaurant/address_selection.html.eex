@@ -1,0 +1,110 @@
+<%= form_for @conn, Routes.public_restaurant_path(@conn, :process, @restaurant_id), [as: :session],  fn session -> %>
+<h1>Choose address for order!</h1>
+
+    <div hidden class="form-group">
+        <%= text_input session, "restaurant_id", id: "restaurant_id", readonly: "readonly", class: "form-control", value: @restaurant_id %>
+    </div>
+
+    <div id="content-for-js" hidden><%= @conn.assigns.current_user.address %></div>
+
+
+    <div style="display: flex; column-gap: 90px;">
+        <div style="display: block">
+        <div class="border"></div>
+            <div class="filters">
+                <div class="form-group">
+                <%= label session, "Saved Address", class: "control-label" %>
+                <%= radio_button session, "address_option", "Living Address",  id: "profile-radio-button", required: "true" %>
+                </div>
+                <div class="form-group">
+                <%= label session, "Current Location", class: "control-label" %>
+                <%= radio_button session, "address_option", "Current Location", id: "current-radio-button"%>
+                </div>
+                <div class="form-group">
+                <%= label session, "Enter address", class: "control-label" %>
+                <%= radio_button session, "address_option", "Searched Address", id: "custom-radio-button" %>
+                </div>
+                <div class="form-group input-div">
+                <%= text_input session, "input_value", id: "final_address", placeholder: "Ex: Narva mnt 25, 51009, Tartu", class: "form-control", readonly: "true", required: "required" %>
+                </div>
+            </div>
+        </div>
+    </div>
+  <div class="form-group">
+      <%= submit "Go to Menu", class: "btn btn-primary", id: "submit_button" %>
+  </div>
+<% end %>
+
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&key=API-KEY"></script>
+
+<script>
+    var input_field = document.getElementById('final_address');
+    var current_radio_button = document.getElementById('current-radio-button');
+    var profile_radio_button = document.getElementById('profile-radio-button');
+    var custom_radio_button = document.getElementById('custom-radio-button');
+    let geoText = '';
+    current_radio_button.addEventListener('click', () => {
+    input_field.setAttribute('readonly', 'true');
+        getLocation();
+        setTimeout(getReverseGeocodingData,1000);
+    });
+    profile_radio_button.addEventListener('click', () => {
+        input_field.placeholder = "Ex: Narva mnt 25, 51009, Tartu";
+        input_field.setAttribute('readonly', 'true');
+        getProfileAddress();
+    });
+    custom_radio_button.addEventListener('click', () => {
+        input_field.placeholder = "Ex: Narva mnt 25, 51009, Tartu";
+        input_field.removeAttribute('readonly');
+        input_field.value = '';
+    });
+
+    function getReverseGeocodingData() {
+        let [lat,lng] = geoText.split(',')
+        var latlng = new google.maps.LatLng(lat, lng);
+        // This is making the Geocode request
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+            if (status !== google.maps.GeocoderStatus.OK) {
+                input_field.placeholder = "Something went wrong."
+                input_field.value = ""
+            }
+            // This is checking to see if the Geoeode Status is OK before proceeding
+            if (status == google.maps.GeocoderStatus.OK) {
+                console.log(results);
+                var address = (results[0].formatted_address);
+                geoText = address
+                input_field.value = address
+            }
+        });
+    }
+
+    function getProfileAddress() {
+    let address = document.getElementById('content-for-js').innerText;
+    input_field.value = address;
+    }
+    function getLocation() {
+    if (geoText == '') {
+        if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(showPosition, noPosition);
+        navigator.geolocation.clearWatch(showPosition, noPosition);
+        } else {
+        input_field.value = 'Geolocation is not supported by this browser.';
+        }
+    } else {
+        input_field.value = geoText;
+    }
+    }
+    function showPosition(position) {
+    if (current_radio_button.checked && geoText == '') {
+        geoText = position.coords.latitude + ',' + position.coords.longitude;
+        input_field.value = "";
+        input_field.placeholder = "Loading...";
+    }
+    }
+    function noPosition(position) {
+    if (current_radio_button.checked && geoText == '') {
+        input_field.value = 'Geolocation not found.';
+    }
+    }
+</script>

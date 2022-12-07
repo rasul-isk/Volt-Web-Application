@@ -1,0 +1,186 @@
+<%= form_for @conn, Routes.customer_path(@conn, :create), [as: :customer], fn customer -> %>
+  <div class="register-container">
+  <h2 class="register-heading">Register</h2>
+  <div class="border"></div>
+  <div class="form-group">
+    <%= label customer, :name,"Customer Name", class: "control-label" %>
+    <%= text_input customer, :name, placeholder: "Your name", required: :true, id: "name", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label customer, :email, class: "control-label" %>
+    <%= email_input customer, :email, placeholder: "Your email address", required: :true, id: "email", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label customer, :crypted_password, "Password", class: "control-label" %>
+    <%= password_input customer, :crypted_password, placeholder: "Your password", required: :true, id: "crypted_password", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label customer, :dateofbirth, class: "control-label" %>
+    <%= date_input customer, :dateofbirth, required: :true, id: "dateofbirth", max: "2004-12-06", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label customer, :address, class: "control-label" %>
+
+    <div class="form-group" style = "margin: 5px; display: inline-flex;">
+      <%= radio_button customer, "address_option", "Current Location", id: "current-radio-button", checked: "true" %>
+      <%= label customer, "Current Location", class: "control-label" %>
+      </div>
+
+      <div class="form-group" style = "margin: 5px; display: inline-flex;">
+      <%= radio_button customer, "address_option", "Searched Address", id: "custom-radio-button" %>
+      <%= label customer, "Enter address", class: "control-label" %>
+    </div>
+    <p id = "try-again" hidden = "true" style="background-color: orange; color: white; width: 225px; text-align: center; border-radius: 10px; cursor: pointer; padding: 10px 0px;">Get my location again</p>
+
+
+    <%= text_input customer, :address, placeholder: "Ex: Narva street 25, 51009, Tartu", required: :true, id: "address", class: "form-control", readonly: "true"  %>
+  </div>
+  <div class="form-group">
+    <%= label customer, :cardnumber, class: "control-label" %>
+    <%= number_input customer, :cardnumber, placeholder: "Your card number", min: "1000000000000000", max: "9999999999999999", required: :true, id: "cardnumber", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label customer, :"Register As", class: "control-label" %>
+    <%= text_input customer, :role, value: "Customer", required: :true, readonly: :readonly, class: "form-control", minlength: "15" %>
+  </div>
+
+  <div class="form-group">
+    <%= submit "Create account", id: "submit_customer", class: "btn btn-primary" %>
+  </div>
+  </div>
+
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&key=API-KEY"></script>
+
+<script>
+    var input_field = document.getElementById('address');
+    var current_radio_button = document.getElementById('current-radio-button');
+    var custom_radio_button = document.getElementById('custom-radio-button');
+    var try_again = document.getElementById('try-again');
+    let geoText = '';
+
+    getLocation();
+
+    if(input_field.value !== "") {
+      try_again.setAttribute("readonly", "true");
+    }
+
+    try_again.addEventListener('click', () => {
+        getLocation();
+    });
+
+
+    current_radio_button.addEventListener('click', () => {
+        input_field.setAttribute('readonly', 'true');
+        getLocation();
+    });
+    custom_radio_button.addEventListener('click', () => {
+        try_again.setAttribute("hidden", "true");
+        input_field.placeholder = "Ex: Narva mnt 25, 51009, Tartu";
+        input_field.removeAttribute('readonly');
+        input_field.value = '';
+    });
+
+    function getReverseGeocodingData() {
+        let [lat,lng] = geoText.split(',')
+        var latlng = new google.maps.LatLng(lat, lng);
+        // This is making the Geocode request
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+            if (status !== google.maps.GeocoderStatus.OK) {
+                input_field.placeholder = "Something went wrong."
+                input_field.value = ""
+            }
+            // This is checking to see if the Geoeode Status is OK before proceeding
+            if (status == google.maps.GeocoderStatus.OK) {
+                console.log(results);
+                var address = (results[0].formatted_address);
+                geoText = address
+                input_field.value = address
+                if(input_field.value !== "") {
+                    try_again.setAttribute("hidden", "true");
+                }
+            }
+        });
+    }
+
+    function getLocation() {
+        if (geoText == '') {
+            if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(showPosition, noPosition);
+            navigator.geolocation.clearWatch(showPosition, noPosition);
+            } else {
+                input_field.placeholder = 'Geolocation is not supported by this browser.';
+                try_again.removeAttribute("hidden");
+            }
+        } else {
+            input_field.value = geoText;
+        }
+    }
+    function showPosition(position) {
+    if (geoText == '') {
+        geoText = position.coords.latitude + ',' + position.coords.longitude;
+        input_field.value = "";
+        input_field.placeholder = "Loading...";
+        getReverseGeocodingData();
+
+    }
+    }
+    function noPosition(position) {
+    if (geoText == '') {
+        input_field.placeholder = 'Geolocation not found.';
+        try_again.removeAttribute("hidden");
+    }
+    }
+</script>
+
+
+<script>
+    var input_field = document.getElementById('final-address');
+    var try_again = document.getElementById('try-again');
+    let geoText = '';
+
+    getLocation();
+
+    if(input_field.value !== "") {
+    try_again.setAttribute("hidden", "true");
+    }
+
+    try_again.addEventListener('click', () => {
+        getLocation();
+        console.log("123");
+    });
+
+
+</script>
+
+
+
+  <style>
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+  .container {
+    max-width: 80rem;
+  }
+  ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: grey;
+  }
+  label {
+    color: black;
+  }
+  input {
+    color: black;
+  }
+  .register-container{
+    margin-top: 100px;
+  }
+  .border {
+    width: 70px;
+    height: 5px;
+    background-color: #ffc000;
+    margin-top: -15px;
+    margin-bottom: 20px;
+  }
+  </style>
+<% end %>

@@ -1,0 +1,231 @@
+<div class="content-container">
+    <div class="headin-part" style="display: flex; justify-content: space-between; margin-top: 30px;">
+        <h2>Ongoing Orders List</h2>
+        <%= link "View order history", to: Routes.restaurant_path(@conn, :orders_history) %>
+    </div>
+    <%= for order <- @orders do %>
+        <%= if order.orderOverallStatus != "delivered" && order.initialStatus != "rejected" && order.isCancelled == false do %>
+            <div class="orders-container">
+                <div class="single-order-container">
+                    <div class="single-order-id"><p>#29<%= order.restaurants.id %><%= order.id %></p></div>
+                    <div class="divider"></div>
+                    <div class="single-order-customer-info">
+                        <p style="font-weight: bold;"><%= order.customers.name %></p>
+                        <p style="width: 100px;"><%= order.addressTo %></p>
+                    </div>
+                    <div class="single-order-price-info">
+                        <p style="font-weight: bold;">Order cost</p>
+                        <p>$<%= order.restaurantFee %></p>
+                    </div>
+                    <div style="width:121.867px;" class="single-order-courier-info">
+                        <p style="font-weight: bold;">Courier</p>
+                        <%= if order.courier_id == 1 do %>
+                            <p>Not assigned yet</p>
+                        <% else %>
+                            <p><%= order.couriers.name %></p>
+                        <% end %>
+                    </div>
+                    <div class="single-order-items-info">
+                        <p style="font-weight: bold;">Ordered Items</p>
+                        <p style="width: 150px; word-wrap: break-word;">
+                            <%= for order_item <- order.order_items do %>
+                                <%= order_item.quantity %> <%= order_item.items.name %>,
+                            <% end %>
+                        </p>
+
+                    </div>
+                    <div class="single-order-resStatus-info">
+                        <p style="font-weight: bold;">Order status</p>
+                        <%= if order.orderRestaurantStatus == "pending" do %>
+                            <p class="order-status-value" style="background-color: red;" id="status-info"><%= order.orderRestaurantStatus %></p>
+                        <% end %>
+                        <%= if order.orderRestaurantStatus == "in-process" do %>
+                            <p class="order-status-value" style="background-color: orange;" id="status-info"><%= order.orderRestaurantStatus %></p>
+                        <% end %>
+                        <%= if order.orderRestaurantStatus == "prepared" do %>
+                            <p class="order-status-value" style="background-color: green;" id="status-info"><%= order.orderRestaurantStatus %></p>
+                        <% end %>
+                    </div>
+                    <div hidden class="single-order-actions">
+                        <p style="font-weight: bold;">Actions</p>
+                        <%= if order.orderRestaurantStatus == "pending" do %>
+                            <%= link "Confirm order", to: Routes.page_path(@conn, :index) %>
+                        <% end %>
+                        <%= if order.orderRestaurantStatus == "in-process" do %>
+                            <%= link "Mark as prepared", to: Routes.page_path(@conn, :index) %>
+                        <% end %>
+                    </div>
+                    <div class="single-order-approx-time">
+                        <%= if order.orderRestaurantStatus == "pending" || order.orderRestaurantStatus == "in-process" do %>
+                            <%= form_for @conn, Routes.restaurant_path(@conn, :update_order_time, order.id), [as: :approxTime], fn approxTime -> %>
+                                <div hidden class="form-group">
+                                    <%= label approxTime, "id", class: "control-label" %>
+                                    <%= number_input approxTime, :id, value: "#{order.id}", required: :true, id: "id", class: "form-control" %>
+                                </div>
+                                <div hidden class="form-group">
+                                    <%= label approxTime, "restaurant_id", class: "control-label" %>
+                                    <%= number_input approxTime, :restaurant_id, value: "#{order.restaurants.id}", required: :true, id: "restaurant_id", class: "form-control" %>
+                                </div>
+                                <%= if order.restaurantPreparationTime == "no-time" do %>
+                                    <div class="form-group">
+                                        <%= label approxTime, :"Time (in minutes)", class: "control-label" %>
+                                        <%= number_input approxTime, :time, min: -119, max: 119, placeholder: "Time to preparation", required: :true, id: "time", class: "form-control" %>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 3px;">
+                                        <%= submit "Confirm order", style: "margin-bottom: 3px;" ,id: "confirm_order", class: "btn btn-primary" %>
+                                    </div>
+                                <% else %>
+                                    <div class="form-group">
+                                        <%= label approxTime, :"Estimated time: #{order.restaurantPreparationTime}", class: "control-label", id: "estimated-time" %>
+                                        <%= number_input approxTime, :time, min: -119, max: 119, placeholder: "Increase estimated time", required: :true, id: "time", class: "form-control" %>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 3px;">
+                                        <%= submit "Update time", id: "confirm_order", class: "btn btn-primary" %>
+                                    </div>
+                                <% end %>
+                            <% end %>
+                        <% else %>
+                            <div class="single-order-prepared-time">
+                                <p style="font-weight: bold; margin-bottom: 3px;">Prepared time</p>
+                                <p><%= order.restaurantPreparationTime %></p>
+                            </div>
+                        <% end %>
+                    </div>
+                    <div class="single-order-actions">
+                        <p style="font-weight: bold;">Actions</p>
+                        <%= link "More details and actions", to: Routes.restaurant_path(@conn, :show_order, order.id), id: "more-actions-button" %>
+                        <%= if order.orderRestaurantStatus == "in-process" do %>
+                            <%= form_for @conn, Routes.restaurant_path(@conn, :mark_order_prepared, order.id), [as: :prepared], fn prepared -> %>
+                                <div hidden class="form-group">
+                                    <%= label prepared, "id", class: "control-label" %>
+                                    <%= number_input prepared, :id, value: "#{order.id}", required: :true, id: "id", class: "form-control" %>
+                                </div>
+                                <div class="form-group" style="margin-top: 28px; margin-bottom: 3px;">
+                                    <%= submit "Mark as prepared", style: "width: 190px; background-color: green;", id: "order_prepared", class: "btn btn-primary" %>
+                                </div>
+                            <% end %>
+                        <% end %>
+                    </div>
+                </div>
+            </div>
+        <% end %>
+    <% end %>
+</div>
+
+<style>
+.content-container {
+    max-width: 1340px;
+}
+
+.single-order-container {
+    display: flex;
+    overflow: auto;
+    width: 1360px;
+    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, .1), 0 4px 11px 0 rgba(0, 0, 0, .08);
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 10px;
+}
+
+.single-order-customer-info {
+    display: block;
+    margin-left: 10px;
+}
+
+.single-order-customer-info p {
+    margin-bottom: 3px;
+}
+
+.single-order-id {
+    margin-right: 10px;
+}
+
+.single-order-id p {
+    font-size: 18px;
+    color: #23395d;
+}
+
+.single-order-price-info {
+    margin-left: 25px;
+}
+
+.single-order-price-info p {
+    margin-bottom: 4px;
+}
+
+.single-order-courier-info {
+    margin-left: 25px;
+}
+
+.single-order-courier-info p {
+    margin-bottom: 3px;
+}
+
+.single-order-items-info {
+    margin-left: 25px;
+}
+
+.single-order-items-info p {
+    margin-bottom: 3px;
+}
+
+.single-order-resStatus-info {
+    margin-left: 25px;
+}
+
+.single-order-resStatus-info p {
+    margin-bottom: 3px;
+    text-align: center;
+}
+
+.order-status-value {
+    color: white;
+    border-radius: 10px;
+    padding: 1px;
+}
+
+.single-order-actions {
+    margin-left: 25px;
+}
+
+.single-order-actions p {
+    margin-bottom: 3px;
+}
+
+.content-container a {
+    margin-bottom: 3px;
+    box-shadow: inset 0 0 0 0 #54b3d6;
+    color: #54b3d6;
+    padding: 5px;
+    border-radius: 10px;
+    transition: color .2s ease-in-out, box-shadow .3s ease-in-out;
+}
+
+.content-container a:hover {
+    box-shadow: inset 187px 0 0 0 #54b3d6;
+    color: white;
+}
+
+.single-order-approx-time {
+    margin-left: 35px;
+}
+
+input[type=number]::-webkit-inner-spin-button {
+    opacity: 0;
+}
+
+input[type=number] {
+    width: 170px;
+}
+
+button[type=submit]  {
+    width: 170px;
+}
+
+.divider {
+    height: 60px;
+    width: 1px;
+    background-color: #ECECEC;
+}
+
+</style>

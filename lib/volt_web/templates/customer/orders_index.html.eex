@@ -1,0 +1,192 @@
+<%= if @ongoing_orders != [] do %>
+    <h3 style="margin-top: 30px;">Ongoing Orders</h3>
+    <div class="border"><div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                <th>Restaurant</th>
+                <th>Courier</th>
+                <th>Items</th>
+                <th>Items Fee</th>
+                <th>Delivery Fee</th>
+                <th>Delivery Address</th>
+                <th>Order Status</th>
+                <th>Order Made</th>
+                <th>Estimated delivery time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%= for ongoing_order <- @ongoing_orders do %>
+                    <tr>
+                        <td><%= ongoing_order.restaurants.name %></td>
+                        <td>
+                            <%= if ongoing_order.couriers.id != 1 do %>
+                                <%= ongoing_order.couriers.name %>
+                            <% else %>
+                                Not assigned yet
+                            <% end %>
+                        </td>
+                        <td>
+                            <%= for order_item <- ongoing_order.order_items do %>
+                                <%= order_item.items.name %> (<%= order_item.quantity %>)
+                            <% end %>
+                        </td>
+                        <td><%= ongoing_order.restaurantFee %></td>
+                        <td><%= ongoing_order.deliveryFee %></td>
+                        <td><%= ongoing_order.addressTo %></td>
+                        <td>
+                            <%= if ongoing_order.orderRestaurantStatus == "pending" do %>
+                                <p style="color: red; margin-top: 15px;"><%= ongoing_order.orderRestaurantStatus %></p>
+                            <% end %>
+                            <%= if ongoing_order.orderRestaurantStatus == "in-process" do %>
+                                <p style="color: orange; margin-top: 15px;"><%= ongoing_order.orderRestaurantStatus %></p>
+                            <% end %>
+                            <%= if ongoing_order.orderRestaurantStatus == "prepared" do %>
+                                <p style="color: green; margin-top: 15px;"><%= ongoing_order.orderRestaurantStatus %></p>
+                            <% end %>
+                        </td>
+                        <td><%= ongoing_order.orderTimeMade %></td>
+                        <td>
+                            <%= if ongoing_order.deliveryTime != "no-time" do %>
+                                <%= ongoing_order.deliveryTime %>
+                            <% else %>
+                            No information yet
+                            <% end %>
+                        </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+<% end %>
+
+<%= if @completed_orders != [] do %>
+    <h3 style="margin-top: 30px;">Completed Orders</h3>
+    <div class="border"><div>
+    <div>
+        <table>
+        <thead>
+            <tr>
+                <th>Restaurant</th>
+                <th>Courier</th>
+                <th>Items</th>
+                <th>Items Fee</th>
+                <th>Delivery Fee</th>
+                <th>Delivery Address</th>
+                <th>Order made</th>
+                <th>Order ready time</th>
+                <th>Order delivery time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= for completed_orders <- @completed_orders do %>
+                <tr>
+                    <td><%= completed_orders.restaurants.name %></td>
+                    <td><%= completed_orders.couriers.name %></td>
+                    <td>
+                        <%= for order_item <- completed_orders.order_items do %>
+                            <%= order_item.items.name %> (<%= order_item.quantity %>)
+                        <% end %>
+                    </td>
+                    <td><%= completed_orders.restaurantFee %></td>
+                    <td><%= completed_orders.deliveryFee %></td>
+                    <td><%= completed_orders.addressTo %></td>
+                    <td><%= completed_orders.orderTimeMade %></td>
+                    <th><%= completed_orders.restaurantPreparationTime %></th>
+                    <th><%= completed_orders.updated_at %></th>
+                    <%= if completed_orders.reviews == nil do %>
+                        <th><%= link "How was your order?", to: Routes.customer_path(@conn, :leave_review_index, completed_orders.id), id: "review_page_button" %></th>
+                    <% end %>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+    </div>
+<% end %>
+
+<%= if @rejected_orders != [] do %>
+    <h3 style="margin-top: 30px;">Rejected Orders</h3>
+    <div class="border"><div>
+    <div>
+        <table>
+        <thead>
+            <tr>
+            <th>Restaurant</th>
+            <th>Items</th>
+            <th>Items Fee</th>
+            <th>Delivery Fee</th>
+            <th>Order Status</th>
+            <th>Reject Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= for rejected_order <- @rejected_orders do %>
+                <tr>
+                    <td><%= rejected_order.restaurants.name %></td>
+                    <td>
+                        <%= for order_item <- rejected_order.order_items do %>
+                            <%= order_item.items.name %> (<%= order_item.quantity %>)
+                        <% end %>
+                    </td>
+                    <td><%= rejected_order.restaurantFee %></td>
+                    <td><%= rejected_order.deliveryFee %></td>
+                    <td><p style="color: red;"><%= rejected_order.initialStatus %></p></td>
+                    <td>
+                        <%= if rejected_order.rejectMessage != "noMessage" do %>
+                            <%= rejected_order.rejectMessage %>
+                        <% else %>
+                            Not any message was mentioned
+                        <% end %>
+                    </td>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+    </div>
+<% end %>
+
+<%= if @cancelled_orders != [] do %>
+    <h3 style="margin-top: 30px;">Cancelled Orders</h3>
+    <div class="border"><div>
+    <div>
+        <table>
+        <thead>
+            <tr>
+                <th>Restaurant</th>
+                <th>Items</th>
+                <th>Items Fee</th>
+                <th>Delivery Fee</th>
+                <th>Delivery Address</th>
+                <th>Order made</th>
+                <th>Order estimated time</th>
+                <th>Order cancelled time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= for cancelled_order <- @cancelled_orders do %>
+                <tr>
+                    <td><%= cancelled_order.restaurants.name %></td>
+                    <td>
+                        <%= for order_item <- cancelled_order.order_items do %>
+                            <%= order_item.items.name %> (<%= order_item.quantity %>)
+                        <% end %>
+                    </td>
+                    <td><%= cancelled_order.restaurantFee %></td>
+                    <td><%= cancelled_order.deliveryFee %></td>
+                    <td><%= cancelled_order.addressTo %></td>
+                    <td><%= cancelled_order.orderTimeMade %></td>
+                    <th><%= cancelled_order.restaurantPreparationTime %></th>
+                    <th><%= cancelled_order.updated_at %></th>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+    </div>
+<% end %>
+
+
+<style>
+
+
+</style>

@@ -1,0 +1,541 @@
+<body>
+  <div class="map-section">
+    <div class="wrapper">
+      <div class="collapsible">
+        <input class="check-input" type="checkbox" id="collapsible-head" onclick="checkCheck()"/>
+        <label class="animation-label" for="collapsible-head" style="border: 1px dashed rgb(18 18 151);"><p id="label-text" class="show-map-button" style="margin-bottom: 0px;">SHOW RESTAURANTS ON MAP</p></label>
+        <div class="collapsible-text">
+            <div id = "mapSection" onload="GetMap();">
+              <div id="map" style="position: relative; width: 1350px; height: 600px;"></div>
+              <div id="content-for-js" hidden><%= @restaraunts_string %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= form_for @conn, Routes.restaurantlists_path(@conn, :index), [as: :session, method: :get],  fn session -> %>
+
+    <label style="margin-bottom: 20px;"><p id="label-text" style="margin-top: 30px;margin-bottom: 20px;font-size: 2.3rem;">Choose filters!</p></label>
+
+    <div style="display: flex; column-gap: 60px;">
+      <div style="display: block">
+        <label><p id="label-text" style="margin-bottom: 10px;">Take address from...</p></label>
+        <div class="border"></div>
+        <div class="filters">
+          <div class="form-group">
+            <%= label session, "Saved Address", class: "control-label" %>
+            <%= radio_button session, "address_option", "Living Address",  id: "profile-radio-button", required: "true" %>
+          </div>
+          <div class="form-group">
+            <%= label session, "Current Location", class: "control-label"%>
+            <%= radio_button session, "address_option", "Current Location", id: "current-radio-button"%>
+          </div>
+          <div class="form-group">
+            <%= label session, "Enter address", class: "control-label" %>
+            <%= radio_button session, "address_option", "Searched Address", id: "custom-radio-button" %>
+          </div>
+            <%= text_input session, "input_value", id: "final-address", placeholder: "Ex: Narva mnt 25, 51009, Tartu", class: "form-control", readonly: "true", required: "required" %>
+          <div class="form-group input-div">
+          </div>
+        </div>
+      </div>
+
+      <div style="display: block">
+        <label><p id="label-text" style="margin-bottom: 10px;">Sort by...</p></label>
+        <div class="border"></div>
+        <div class="filters">
+          <div class="form-group">
+            <%= label session, "Distance", class: "control-label"%>
+            <%= radio_button session, "sort_option", "distance", id: "distance-radio-button", required: "true" %>
+          </div>
+          <div class="form-group">
+            <%= label session, "Tag", class: "control-label" %>
+            <%= radio_button session, "sort_option", "tag", id: "tag-radio-button" %>
+          </div>
+          <div id = "tags-buttons" hidden = "true">
+            <div class="form-group">
+              <%= label session, "Fast-food", class: "control-label" %>
+              <%= radio_button session, "sort_option_input", "fast-food", id: "tag-input-button-1", checked: true, required: true, disabled: true %>
+            </div>
+            <div class="form-group">
+              <%= label session, "Vegan", class: "control-label" %>
+              <%= radio_button session, "sort_option_input", "vegan", id: "tag-input-button-2", disabled: true  %>
+            </div>
+            <div class="form-group">
+              <%= label session, "American", class: "control-label" %>
+              <%= radio_button session, "sort_option_input", "american", id: "tag-input-button-3", disabled: true  %>
+            </div>
+            <div class="form-group">
+              <%= label session, "Spicy", class: "control-label" %>
+              <%= radio_button session, "sort_option_input", "spicy", id: "tag-input-button-4", disabled: true  %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: block">
+        <label><p id="label-text" style="margin-bottom: 10px;">Show Restaurants</p></label>
+        <div class="border"></div>
+        <div class="filters" style="display: flex;">
+          <div class="form-group">
+            <%= label session, "All", class: "control-label"%>
+            <%= radio_button session, "show_option", "all", id: "all-radio-button", required: "true"   %>
+          </div>
+          <div class="form-group">
+            <%= label session, "Only Available", class: "control-label" %>
+            <%= radio_button session, "show_option", "available", id: "available-radio-button" %>
+          </div>
+          <%= submit "Apply filters", class: "btn btn-primary", id: "submit_button" %>
+        </div>
+      </div>
+    </div>
+    <div class="form-group" style="text-align:center; margin-top: 20px;">
+    </div>
+    </div>
+  <% end %>
+  <section class="hero-section" style="display:none;">
+    <div class="card-grid">
+      <a class="card" href="#">
+        <div class="card__background" style="background-image: url(https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80)"></div>
+        <div class="card__content">
+          <p class="card__category">Category</p>
+          <h3 class="card__heading">Burger</h3>
+        </div>
+      </a>
+      <a class="card" href="#">
+        <div class="card__background" style="background-image: url(https://images.unsplash.com/photo-1593504049359-74330189a345?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80)"></div>
+        <div class="card__content">
+          <p class="card__category">Category</p>
+          <h3 class="card__heading">Pizza</h3>
+        </div>
+      </a>
+      <a class="card" href="#">
+        <div class="card__background" style="background-image: url(https://images.unsplash.com/photo-1540420773420-3366772f4999?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=684&q=80)"></div>
+        <div class="card__content">
+          <p class="card__category">Category</p>
+          <h3 class="card__heading">Vegan</h3>
+        </div>
+      </li>
+      <a class="card" href="#">
+        <div class="card__background" style="background-image: url(https://images.unsplash.com/photo-1624174503901-11e36ada9466?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80)"></div>
+        <div class="card__content">
+          <p class="card__category">Category</p>
+          <h3 class="card__heading">American</h3>
+        </div>
+      </a>
+    <div>
+  </section>
+
+  <section class="cardsWrapper">
+      <%= for restaurant <- @restaurants do %>
+        <div class="restaurant-card" sty>
+          <%= link to: Routes.public_restaurant_path(@conn, :addressIndex, restaurant.id) do %>
+            <div class="image-container">
+                <img class="restaurant-image" src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" alt="Restaurant-image" >
+            </div>
+            <div class="content">
+              <div class="upper-content-container">
+                <p class="restaurant-name" style="max-width: 100%;justify-content: center;margin: 1rem;color:black;"><%= restaurant.name %></p>
+
+              </div>
+              <hr style="margin:0px;border-top:black dashed 1px;">
+              <div class="lower-content-container">
+                <p style="text-align: left;margin: 1rem;color:black;">Address: <%= restaurant.address %></p>
+                <p style="text-align: left;margin: 1rem;color:black;">Opens at: <%= restaurant.opens_at %></p>
+                <p style="text-align: left;margin: 1rem;color:black;">Closes at: <%= restaurant.closes_at %></p>
+              </div>
+            </div>
+              <% end %>
+        </div>
+      <% end %>
+  </section>
+</body>
+
+<script type='text/javascript'
+        src='http://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=API-KEY'
+async defer></script>
+
+<script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0">
+</script>
+
+<script>
+var input_field = document.getElementById('final-address');
+var submit_button = document.getElementById('submit_button');
+var current_radio_button = document.getElementById('current-radio-button');
+var profile_radio_button = document.getElementById('profile-radio-button');
+var custom_radio_button = document.getElementById('custom-radio-button');
+var tag_radio_button = document.getElementById('tag-radio-button');
+var distance_radio_button = document.getElementById('distance-radio-button');
+var tags_buttons = document.getElementById(`tags-buttons`);
+let geoText = '';
+
+tag_radio_button.checked && unHideTags();
+
+tag_radio_button.addEventListener('click', () => {unHideTags()});
+
+distance_radio_button.addEventListener('click', () => {hideTags()});
+
+current_radio_button.addEventListener('click', () => {
+  input_field.setAttribute('readonly', 'true');
+  getLocation();
+});
+profile_radio_button.addEventListener('click', () => {
+  input_field.setAttribute('readonly', 'true');
+  getProfileAddress();
+});
+custom_radio_button.addEventListener('click', () => {
+  input_field.removeAttribute('readonly');
+  input_field.value = '';
+});
+
+function unHideTags () {
+  for(let itr = 1; itr <5; itr++) {
+    var tag_button = document.getElementById(`tag-input-button-${itr}`);
+    tag_button.removeAttribute('disabled');
+  }
+  tags_buttons.removeAttribute('hidden')
+}
+function hideTags () {
+  for(let itr = 1; itr <5; itr++) {
+    var tag_button = document.getElementById(`tag-input-button-${itr}`);
+    tag_button.setAttribute('disabled', 'true');
+  }
+  tags_buttons.setAttribute('hidden','true');
+}
+
+function getProfileAddress() {
+  let restaraunts = document.getElementById('content-for-js').innerText.split('|');
+  user_info = restaraunts[0].split('/');
+  input_field.value = user_info[1] + ',' + user_info[2];
+}
+function getLocation() {
+  if (geoText == '') {
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(showPosition, noPosition, { enableHighAccuracy: true, timeout: 2000, maximumAge: 10000 });
+      navigator.geolocation.clearWatch(showPosition, noPosition);
+    } else {
+      input_field.value = 'Geolocation is not supported by this browser.';
+    }
+  } else {
+    input_field.value = geoText;
+  }
+}
+function showPosition(position) {
+  if (current_radio_button.checked && geoText == '') {
+    geoText = position.coords.latitude + ',' + position.coords.longitude;
+    input_field.value = geoText;
+  }
+}
+function noPosition(position) {
+  if (current_radio_button.checked && geoText == '') {
+    input_field.value = 'Geolocation not found.';
+  }
+}
+</script>
+
+<script type='text/javascript'>
+var pinInfobox;
+function GetMap() {
+  //restaraunts
+  let restaraunts = document.getElementById('content-for-js').innerText.split('|');
+  var pushpinInfos = [];
+  var infoboxLayer = new Microsoft.Maps.EntityCollection();
+  var pinLayer = new Microsoft.Maps.EntityCollection();
+  var apiKey = 'AgwdG2GQ2_CXMru8EU90spxdKtPtP6_pWWvczb60UuIbZyFXjlDPn474f768oj0Y';
+  user_info = restaraunts[0].split('/');
+  pushpinInfos.push({ role: 'Customer', title: user_info[0], lat: parseFloat(user_info[1]), lng: parseFloat(user_info[2]), description: 'Customer' });
+  var map = new Microsoft.Maps.Map('#map', {
+    credentials: apiKey,
+    center: new Microsoft.Maps.Location(58.382889, 26.728291), //Narva mnt 25 location
+    zoom: 15,
+  });
+  if(restaraunts.length > 1)
+  {
+    for (let itr = 1; itr < restaraunts.length; itr++) {
+      let restaraunt = restaraunts[itr].split('/');
+      let newObject = { role: 'Restaurant', title: restaraunt[0], lat: parseFloat(restaraunt[1]), lng: parseFloat(restaraunt[2]), description: restaraunt[3], id: restaraunt[4] };
+      pushpinInfos.push(newObject);
+    }
+  }
+    // Create the info box for the pushpin
+    pinInfobox = new Microsoft.Maps.Infobox(new Microsoft.Maps.Location(0, 0), {showPointer: true, visible: false, title: 'Map Center', description: 'Seattle'});
+    infoboxLayer.push(pinInfobox);
+    var locs = [];
+    var сolorOfPin;
+    for (var i = 0; i < pushpinInfos.length; i++) {
+      locs[i] = new Microsoft.Maps.Location(pushpinInfos[i].lat, pushpinInfos[i].lng);
+      сolorOfPin = (pushpinInfos[i].role == 'Restaurant' && 'red') || '';
+      сolorOfPin = (pushpinInfos[i].role == 'Courier' && 'yellow') || сolorOfPin;
+      сolorOfPin = (pushpinInfos[i].role == 'Customer' && 'green') || сolorOfPin;
+      console.log(сolorOfPin);
+      var pin = new Microsoft.Maps.Pushpin(locs[i], { color: сolorOfPin });
+      pin.Title = pushpinInfos[i].title;
+      pin.Description = pushpinInfos[i].description;
+      pin.id = pushpinInfos[i].id;
+      pinLayer.push(pin);
+      Microsoft.Maps.Events.addHandler(pin, 'click', displayInfobox);
+    }
+    map.entities.push(pinLayer);
+    map.entities.push(infoboxLayer);
+    //var bestview = Microsoft.Maps.LocationRect.fromLocations(locs);
+    //map.setView({ center: bestview.center, zoom: 10 });
+}
+function displayInfobox(e) {
+  if(e.target.Description != "Customer" && e.target.Description != "Courier")
+  {
+    pinInfobox.setOptions({showPointer: true, actions: [{label: 'Go to Restaurant', eventHandler: () => replaceHREF(e.target.id)}], title: e.target.Title, description: e.target.Description, visible: true, offset: new Microsoft.Maps.Point(0, 25)});
+    pinInfobox.setLocation(e.target.getLocation());
+  }
+  else {
+    pinInfobox.setOptions({showPointer: true, actions: [{}], title: e.target.Title, description: e.target.Description, visible: true, offset: new Microsoft.Maps.Point(0, 25)});
+    pinInfobox.setLocation(e.target.getLocation());
+  }
+  const style = document.createElement('style');
+  style.innerHTML = `
+        .infobox-actions {
+          display: contents;
+        }
+      `;
+  document.head.appendChild(style);
+}
+function hideInfobox(e) {
+  pinInfobox.setOptions({ visible: false });
+}
+function checkCheck() {
+  var checkBox = document.getElementById('collapsible-head');
+  var text = document.getElementById('label-text');
+  if (checkBox.checked == true) {
+    text.innerHTML = 'CLOSE MAP';
+  } else {
+    text.innerHTML = 'SHOW RESTAURANTS ON MAP';
+  }
+}
+function replaceHREF(id) {
+  window.location.replace(`http://localhost:4000/restaurants/${id}/choose-address`);
+}
+</script>
+
+
+<style>
+  .wrapper {
+    width: 1350px;
+    display: flex;
+    padding-top: 50px;
+    justify-content: center;
+    margin-right: 40px;
+  }
+  .collapsible {
+    width: 1350px;
+    overflow: hidden;
+    font-weight: 500;
+  }
+  .collapsible .check-input  {
+    display: none;
+  }
+  .collapsible .animation-label {
+    width: 1350px;
+    position: relative;
+    font-weight: 600;
+    background: #fff;
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .1), 0 4px 11px 0 rgba(0, 0, 0, .08);
+    color: #1c1c6b;
+    display: block;
+    margin-bottom: 10px;
+    cursor: pointer;
+    padding: 15px 10px;
+    border-radius: 8px;
+    z-index: 1;
+    transition: 0.3s;
+    text-align: center;
+  }
+  .collapsible .animation-label:hover {
+    background-color: #ffc000;
+  }
+  .collapsiblee .animation-label::after {
+    content: "";
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    width: 18px;
+    height: 18px;
+  }
+  .collapsible-text {
+    max-height: 1px;
+    overflow: hidden;
+    border-radius: 4px;
+    line-height: 1.4;
+    position: relative;
+    top: -100%;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    overflow: auto;
+  }
+  .collapsible > input:checked ~ .collapsible-text {
+    max-height: 700px;
+    padding-bottom: 25px;
+    background: #fff;
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .1), 0 4px 11px 0 rgba(0, 0, 0, .08);
+    opacity: 1;
+    top: 0;
+  }
+  .collapsible-text h2 {
+    margin-bottom: 10px;
+    padding: 15px 15px 0;
+  }
+  .filters {
+    display: flex;
+    column-gap: 20px;
+  }
+  .border {
+    width: 100px;
+    height: 3px;
+    background-color: #ffc000;
+    margin-top: -15px;
+    margin-bottom: 20px;
+  }
+  :root{
+    --background-dark: #2d3548;
+    --text-light: rgba(255,255,255,0.6);
+    --text-lighter: rgba(255,255,255,0.9);
+    --spacing-s: 8px;
+    --spacing-m: 16px;
+    --spacing-l: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 64px;
+    --width-container: 1200px;
+  }
+  *{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .hero-section{
+  align-items: flex-start;
+  display: flex;
+  min-height: 100%;
+  justify-content: center;
+  padding: var(--spacing-xxl) var(--spacing-l);
+}
+.card-grid{
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-column-gap: var(--spacing-l);
+  grid-row-gap: var(--spacing-l);
+  max-width: var(--width-container);
+  width: 100%;
+}
+@media(min-width: 540px){
+  .card-grid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media(min-width: 960px){
+  .card-grid{
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.card{
+  list-style: none;
+  position: relative;
+}
+.card:before{
+  content: '';
+  display: block;
+  padding-bottom: 150%;
+  width: 100%;
+}
+.card__background{
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--spacing-l);
+  bottom: 0;
+  filter: brightness(0.75) saturate(1.2) contrast(0.85);
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform-origin: center;
+  trsnsform: scale(1) translateZ(0);
+  transition:
+    filter 200ms linear,
+    transform 200ms linear;
+}
+.card:hover .card__background{
+  transform: scale(1.05) translateZ(0);
+}
+.card-grid:hover > .card:not(:hover) .card__background{
+  filter: brightness(0.5) saturate(0.5) contrast(1.2) blur(5px);
+}
+.card__content{
+  left: 0;
+  padding: var(--spacing-l);
+  position: absolute;
+  top: 0;
+}
+.card__category{
+  color: var(--text-light);
+  font-size: 1.7rem;
+  margin-bottom: var(--spacing-s);
+  text-transform: uppercase;
+}
+.card__heading{
+  color: var(--text-lighter);
+  font-size: 2.9rem;
+  text-shadow: 2px 2px 20px rgba(0,0,0,0.2);
+  line-height: 1.4;
+  word-spacing: 100vw;
+}
+
+
+
+
+
+.cardsWrapper {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.restaurant-card {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  width: 400px;
+  align-self: center;
+  margin-top: 1rem;
+  justify-self: center;
+  transition: 0.3s;
+  border-radius: 20px;
+}
+
+.restaurant-card:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.image-container {
+  width: 400px;
+  height: 150px;
+  overflow: hidden;
+}
+
+.restaurant-image {
+  border-radius: 20px;
+}
+
+.content {
+  padding: 5px;
+}
+
+.restaurant-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 270px;
+}
+
+
+
+</style>

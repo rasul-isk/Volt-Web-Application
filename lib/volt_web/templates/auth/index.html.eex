@@ -1,0 +1,88 @@
+<div class="whole-container">
+    <h2>Register As</h2>
+    <div class="card-container">
+    <div class="card">
+        <img src="https://media.istockphoto.com/id/1300590983/vector/hungry-woman-feeling-angry-and-impatient.jpg?s=612x612&w=0&k=20&c=zPNIR7phvtuxR35rmJtzv9Bc4Fk7lu8whF_ISCFB7J8=" alt="Customer">
+        <div class="intro">
+            <h1>Customer</h1>
+            <p><span> <%= link "Become Customer", to: Routes.customer_path(@conn, :new) %></span>&nbsp;for ordering food, drinks and much more delicious things!</p>
+        </div>
+    </div>
+    <div class="card">
+        <img src="https://static.vecteezy.com/system/resources/previews/006/461/876/original/courier-bring-packages-to-customer-illustration-contact-delivery-service-of-courier-and-customer-vector.jpg" alt="Customer">
+        <div class="intro">
+            <h1>Courier</h1>
+            <p><span> <%= link "Become Courier", to: Routes.courier_path(@conn, :new) %></span>&nbsp;to pick up available orders and making money by delivering food!</p>
+        </div>
+    </div>
+    <div class="card">
+        <img src="https://img.freepik.com/premium-vector/fast-food-restaurant-building-with-drive-thru-service-flat-style-illustration-isolated-white-background_201904-201.jpg?w=2000" alt="Customer">
+        <div class="intro">
+            <h1>Restaurant</h1>
+            <p><span> <%= link "Become Restaurant", to: Routes.restaurant_path(@conn, :new) %></span>&nbsp;to sell food for customers with the help of couriers!</p>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<style>
+    .container {
+        max-width: 80rem;
+    }
+    .whole-container {
+        margin-top: 200px;
+        text-align: center;
+    }
+    .card-container {
+        display: flex;
+    }
+    .card {
+        margin: 10px;
+        box-shadow: 5px 5px 20px black;
+        width: 250px;
+        overflow: hidden;
+    }
+    img {
+        height: 300px;
+        border-radius: 3px;
+        width: 350px;
+    }
+
+    .intro {
+        height: 70px;
+        width: 235px;
+        padding: 6px;
+        box-sizing: border-box;
+        position: absolute;
+        bottom: 9px;
+        background: rgb(27, 27, 27, .5);
+        color: white;
+        transition: .5s;
+    }
+    h1 {
+        margin: 10px;
+        font-size: 30px;
+    }
+    p {
+        font-size: 20px;
+        visibility: hidden;
+        opacity: 0;
+    }
+    span {
+        font-weight: bold;
+    }
+    .card:hover {
+        cursor: pointer;
+    }
+
+    .card:hover .intro {
+        height: 310px;
+        bottom: 5px;
+        background: black;
+    }
+    .card:hover p {
+        opacity: 1;
+        visibility: visible;
+    }
+</style>

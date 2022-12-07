@@ -1,0 +1,22 @@
+<%= form_for @changeset, Routes.password_reset_path(@conn, :update, @conn.assigns.current_user.id),
+ [class: "elixircasts-form"], fn f -> %>
+  <div class="form-group">
+  <%= label f, :crypted_password, "New password" %>
+    <%= password_input f, :crypted_password, placeholder: "new password", required: true, id: "crypted_password", class: "form-control" %>
+  </div>
+  
+  <div class="form-group">
+  <%= error_tag f, :crypted_password %>
+  </div>
+
+
+  <div>
+    <%= submit "Save", id: "submit_button" %>
+  </div>
+<% end %>
+
+<style>
+  .container {
+    max-width: 80rem;
+  }
+</style>

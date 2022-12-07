@@ -1,0 +1,43 @@
+<%= if @restaurant.menus.numberOfItems == 0  do %>
+    <h1>There are not any items in your menu yet!</h1>
+    <h2> <%= link "Click here", to: Routes.item_path(@conn, :new, @restaurant.menus.id), id: "add-very-new-item" %> and start to add your items to sell</h2>
+<% end %>
+
+<%= if @restaurant.menus.numberOfItems != 0  do %>
+    <p><%= link "Add new item", to: Routes.item_path(@conn, :new, @restaurant.menus.id), id: "add-new-item" %></p>
+    <table>
+        <thead>
+            <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Actions</th>
+
+            <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        <%= for item <- @menu.items do %>
+            <tr>
+            <td><%= item.name %></td>
+            <td><%= item.description %></td>
+            <td><%= item.category %></td>
+            <td>$<%= item.price %></td>
+
+            <td>
+                <span><%= link "Edit", to: Routes.restaurant_path(@conn, :edit_item, item.id), id: "edit-button" %></span>
+                <span><%= link "Delete", to: Routes.restaurant_path(@conn, :delete_item, item.id), method: :delete, data: [confirm: "Are you sure?"], id: "delete-button" %></span>
+            </td>
+            </tr>
+        <% end %>
+        </tbody>
+    </table>
+
+<% end %>
+
+<style>
+  .container {
+    max-width: 80rem;
+  }
+</style>

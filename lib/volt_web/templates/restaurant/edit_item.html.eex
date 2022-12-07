@@ -1,0 +1,50 @@
+<%= form_for @conn, Routes.restaurant_path(@conn, :update_item, @item.id), [as: :item], fn item -> %>
+    <div div class="register-container">
+        <h2 class="register-heading">Update Item Info</h2>
+        <div class="border"></div>
+        <div class="form-group">
+            <%= label item, :name, class: "control-label" %>
+            <%= text_input item, :name, value: "#{@item.name}", class: "form-control", id: "name" %>
+        </div>
+        <div class="form-group">
+            <%= label item, :description, class: "control-label" %>
+            <%= text_input item, :description, value: "#{@item.description}", class: "form-control" %>
+        </div>
+        <div class="form-group">
+            <%= label item, :category, class: "control-label" %>
+            <%= text_input item, :category, value: "#{@item.category}", class: "form-control" %>
+        </div>
+        <div class="form-group">
+            <%= label item, :price, class: "control-label" %>
+            <%= number_input item, :price, step: "0.01", value: "#{@item.price}", class: "form-control" %>
+        </div>
+        <div class="form-group">
+            <%= submit "Update information", class: "btn btn-primary", id: "submit_button" %>
+        </div>
+    </div>
+
+  <style>
+  .container {
+    max-width: 80rem;
+  }
+  ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: grey;
+  }
+  label {
+    color: black;
+  }
+  input {
+    color: black;
+  }
+  .register-container{
+    margin-top: 100px;
+  }
+  .border {
+    width: 70px;
+    height: 5px;
+    background-color: #ffc000;
+    margin-top: -15px;
+    margin-bottom: 20px;
+  }
+  </style>
+<% end %>

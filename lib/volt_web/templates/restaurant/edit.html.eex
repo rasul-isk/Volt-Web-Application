@@ -1,0 +1,146 @@
+<%= form_for @conn, Routes.restaurant_path(@conn, :update, @conn.assigns.current_user.id), fn restaurant -> %>
+  <div class="register-container">
+    <h2 class="register-heading">Update Restaurant Info</h2>
+    <div class="border"></div>
+    <div class="form-group">
+      <%= label restaurant, :name, class: "control-label" %>
+      <%= text_input restaurant, :name, value: "#{@conn.assigns.current_user.name}", class: "form-control", id: "name" %>
+    </div>
+    <div class="form-group">
+      <%= label restaurant, :email, class: "control-label" %>
+      <%= email_input restaurant, :email, value: "#{@conn.assigns.current_user.email}", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= label restaurant, :address, class: "control-label" %>
+      <%= text_input restaurant, :address, value: "#{@conn.assigns.current_user.address}", class: "form-control" %>
+    </div>
+
+    <div class="filters">
+    <p>Category</p>
+
+    <div class="form-group">
+    <div hidden id = "content-for-js"><%= @conn.assigns.current_user.category %>|<%= @conn.assigns.current_user.tags %></div>
+    <%= label restaurant, "Burger", class: "control-label" %>
+
+    <%= radio_button restaurant, "category", "Burger",  id: "burger-radio-button", required: "true" %>
+    </div>
+    <div class="form-group">
+    <%= label restaurant, "Pizza", class: "control-label" %>
+    <%= radio_button restaurant, "category", "Pizza", id: "pizza-radio-button"%>
+    </div>
+    <div class="form-group">
+    <%= label restaurant, "Sushi", class: "control-label" %>
+    <%= radio_button restaurant, "category", "Sushi", id: "sushi-radio-button" %>
+    </div>
+
+    <p>Choose tags (one or more)</p>
+
+    <div class="form-group">
+    <%= label restaurant, "fast-food", class: "control-label" %>
+    <input type="checkbox" id="fast-food-check" >
+    </div>
+    <div class="form-group">
+    <%= label restaurant, "vegan", class: "control-label" %>
+    <input type="checkbox" id="vegan-check" >
+    </div>
+    <div class="form-group">
+    <%= label restaurant, "american", class: "control-label" %>
+    <input type="checkbox" id="american-check" >
+    </div>
+    <%= label restaurant, "spicy", class: "control-label" %>
+    <input type="checkbox" id="spicy-check" >
+    </div>
+    <div class="form-group input-div">
+    <%= text_input restaurant, "tags", id: "final-tags", placeholder: "Choose tags from options above.", class: "form-control", readonly: "true", required: "required" %>
+    </div>
+</div>
+    <div class="form-group">
+      <%= label restaurant, :opens_at, class: "control-label" %>
+      <%= time_input restaurant, :opens_at, value: "#{@conn.assigns.current_user.opens_at}", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= label restaurant, :closes_at, class: "control-label" %>
+      <%= time_input restaurant, :closes_at, value: "#{@conn.assigns.current_user.closes_at}", class: "form-control" %>
+    </div>
+    <div hidden class="form-group">
+      <%= label restaurant, :likes, class: "control-label" %>
+      <%= number_input restaurant, :likes, readonly: "readonly", value: "#{@conn.assigns.current_user.likes}", class: "form-control" %>
+    </div>
+    <div hidden class="form-group">
+      <%= label restaurant, :dislikes, class: "control-label" %>
+      <%= number_input restaurant, :dislikes, readonly: "readonly", value: "#{@conn.assigns.current_user.dislikes}", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= label restaurant, :role, class: "control-label" %>
+      <%= text_input restaurant, :role, value: "Restaurant", readonly: "readonly", class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= label restaurant, :description, class: "control-label" %>
+      <%= text_input restaurant, :description, required: :true, id: "description", value: "#{@conn.assigns.current_user.description}", class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= submit "Update information", class: "btn btn-primary", id: "submit_button" %>
+    </div>
+  </div>
+
+
+<script>
+let information = document.getElementById("content-for-js").innerText
+let chosen_category = information.split('|')[0]
+let chosen_tags = information.split('|')[1].split(',')
+let fast_food = document.getElementById("fast-food-check")
+let vegan_check = document.getElementById("vegan-check")
+let american_check = document.getElementById("american-check")
+let spicy_check = document.getElementById("spicy-check")
+let final_input = document.getElementById("final-tags")
+
+update_final_input();
+
+document.getElementById(`${chosen_category.toLowerCase()}-radio-button`).click();
+chosen_tags.map(el => {document.getElementById(`${el.toLowerCase()}-check`).click();})
+
+fast_food.addEventListener('click',() => {update_final_input()});
+vegan_check.addEventListener('click',() => {update_final_input()});
+american_check.addEventListener('click',() => {update_final_input()});
+spicy_check.addEventListener('click',() => {update_final_input()});
+
+function update_final_input () {
+  let result = []
+
+  fast_food.checked && result.push("fast-food");
+  vegan_check.checked && result.push("vegan");
+  american_check.checked && result.push("american");
+  spicy_check.checked && result.push("spicy");
+
+  final_input.value = result.join(",")
+}
+
+</script>
+
+  <style>
+  .container {
+    max-width: 80rem;
+  }
+  ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: grey;
+  }
+  label {
+    color: black;
+  }
+  input {
+    color: black;
+  }
+  .register-container{
+    margin-top: 100px;
+  }
+  .border {
+    width: 70px;
+    height: 5px;
+    background-color: #ffc000;
+    margin-top: -15px;
+    margin-bottom: 20px;
+  }
+  </style>
+<% end %>

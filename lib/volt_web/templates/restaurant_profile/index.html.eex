@@ -1,0 +1,106 @@
+<%= if @conn.assigns.current_user do %>
+    <p style="margin-top: 70px;" class="text">Tere, <%= @conn.assigns.current_user.name %>!</p>
+    <p style="margin-top: -20px;" class="text">Here, you can view and edit your profile information</p>
+<% else %>
+    <p class="text">You need to login to view your profile!</p>
+<% end %>
+
+<div class="profile-container">
+    <div class="profile-info-container">
+        <div style="padding-top: 30px;" class="profile-info">
+            <p class="info-text">Name:</p>
+            <p class="info-text" id="name"><%= @conn.assigns.current_user.name %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Email:</p>
+            <p class="info-text"><%= @conn.assigns.current_user.email %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Address:</p>
+            <p class="info-text"><%= @conn.assigns.current_user.address %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Opening hour:</p>
+            <p class="info-text"><%= @conn.assigns.current_user.opens_at %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Closing hour:</p>
+            <p id="closes_at" class="info-text"><%= @conn.assigns.current_user.closes_at %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Positive reviews</p>
+            <p class="info-text"><%= @conn.assigns.current_user.likes %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Negative reviews:</p>
+            <p class="info-text"><%= @conn.assigns.current_user.dislikes %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Role:</p>
+            <p class="info-text"><%= @conn.assigns.current_user.role %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Category:</p>
+            <p class="info-text"><%= @conn.assigns.current_user.category %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Tags:</p>
+            <p class="info-text"><%= @conn.assigns.current_user.tags %></p>
+        </div>
+        <div class="profile-info">
+            <p class="info-text">Description:</p>
+            <p class="info-text"><%= @conn.assigns.current_user.description %></p>
+        </div>
+        <div class="profile-info">
+            <p class="linkk"><%= link "Edit information", to: Routes.restaurant_path(@conn, :edit, @conn.assigns.current_user), id: "edit-info-button"%></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        align-items: center;
+        text-align: center;
+        justify-content:center;
+        max-width: 80rem;
+    }
+    .text{
+        font-size: 20px;
+    }
+    .profile-container {
+        width: 500px;
+        height: 650px;
+        background-color: #3e567c;
+        display: block;
+        border-radius: 10px;
+        box-shadow: 10px 10px #ffc000;
+        margin-left: 17%;
+    }
+    .profile-info {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        align-items:center;
+        column-gap: 10px;
+    }
+    .info-text {
+        color: white;
+        font-size: 17px;
+    }
+    .linkk a {
+        margin-top: 25px;
+        text-decoration: none;
+        list-style-type: none;
+        color: black;
+        transition: .5s;
+        background-color: white;
+        padding: 3px 9px;
+        font-weight: bold;
+        font-size: 20px;
+    }
+    .linkk a:hover {
+        background-color: #ffc000;
+        color: #3e567c;
+        border-radius: 10px;
+    }
+</style>

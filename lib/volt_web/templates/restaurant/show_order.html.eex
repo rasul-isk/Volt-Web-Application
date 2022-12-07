@@ -1,0 +1,70 @@
+<div><h2>Order Details<h2></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Customer</th>
+      <th>Courier</th>
+      <th>Order cost</th>
+      <th>Ordered items</th>
+      <th>Status</th>
+      <th>Estimated Preparation</th>
+      <th>Placed time</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @order.customers.name %></td>
+      <%= if @order.couriers.id != 1 do %>
+        <td><%= @order.couriers.name %></td>
+      <% else %>
+        <td>Not assigned</td>
+      <% end %>
+      <td>$<%= @order.restaurantFee %></td>
+      <td>
+          <%= for order_item <- @order.order_items do %>
+            <%= order_item.items.name %> (<%= order_item.quantity %>),
+          <% end %>
+      </td>
+      <td><%= @order.orderRestaurantStatus %></td>
+      <%= if @order.restaurantPreparationTime == "no-time" do %>
+        <td>Not set yet</td>
+      <% else %>
+        <td><%= @order.restaurantPreparationTime %></td>
+      <% end %>
+      <td><%= @order.orderTimeMade %></td>
+      <td>
+        <%= if (@order.initialStatus == "pending" && @order.orderRestaurantStatus == "pending" && @order.orderOverallStatus == "submitted") do %>
+          <%= form_for @conn, Routes.restaurant_path(@conn, :reject_order, @order.id), [as: :reject], fn reject -> %>
+            <div hidden class="form-group">
+                <%= label reject, "id", class: "control-label" %>
+                <%= number_input reject, :id, value: "#{@order.id}", required: :true, id: "id", class: "form-control" %>
+            </div>
+            <div class="form-group">
+                <%= label reject, "Reject message", class: "control-label" %>
+                <%= text_input reject, :rejectMessage, placeholder: "Reason of order rejection", style: "margin-bottom: -40px;",  id: "rejectMesage", class: "form-control" %>
+            </div>
+            <div class="form-group" style="margin-top: 28px; margin-bottom: 3px;">
+                <%= submit "Reject order", style: "background-color: red; border: none;", id: "order_prepared", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        <% end %>
+        <%= if (@order.initialStatus == "accepted" && @order.couriers.id == 1) do %>
+          <%= form_for @conn, Routes.restaurant_path(@conn, :cancel_order, @order.id), [as: :cancel], fn cancel -> %>
+            <div hidden class="form-group">
+                <%= label cancel, "id", class: "control-label" %>
+                <%= number_input cancel, :id, value: "#{@order.id}", required: :true, id: "id", class: "form-control" %>
+            </div>
+            <div class="form-group" style="margin-top: 28px; margin-bottom: 3px;">
+                <%= submit "Cancel order", style: "background-color: red; border: none;", id: "order_prepared", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        <% end %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<style>
+</style>

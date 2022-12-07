@@ -1,0 +1,115 @@
+<h3 style="margin-top: 30px;">Total Revenue</h3>
+<strong><h4> <%= @total_revenue %> Euro</h4></strong>
+<h1>Restaurant Orders History</h1>
+<%= if @completed_orders != [] do %>
+    <h3 style="margin-top: 30px;">Ongoing Orders</h3>
+    <div class="border"><div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Courier</th>
+                    <th>Items sold</th>
+                    <th>Earning from order</th>
+                    <th>Delivery Address</th>
+                    <th>Order Made</th>
+                    <th>Order prepared</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%= for completed_order <- @completed_orders do %>
+                    <tr>
+                        <td><%= completed_order.customers.name %></td>
+                        <td><%= completed_order.couriers.name %></td>
+                        <td>
+                            <%= for order_item <- completed_order.order_items do %>
+                                <%= order_item.items.name %> (<%= order_item.quantity %>)
+                            <% end %>
+                        </td>
+                        <td>Some calculations here</td>
+                        <td><%= completed_order.addressTo %></td>
+                        <td><%= completed_order.orderTimeMade %></td>
+                        <td><%= completed_order.restaurantPreparationTime %></td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+<% end %>
+
+<%= if @rejected_orders != [] do %>
+    <h3 style="margin-top: 30px;">Rejected Orders</h3>
+    <div class="border"><div>
+    <div>
+        <table>
+        <thead>
+            <tr>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Items Fee</th>
+            <th>Order Status</th>
+            <th>Reject Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= for rejected_order <- @rejected_orders do %>
+                <tr>
+                    <td><%= rejected_order.customers.name %></td>
+                    <td>
+                        <%= for order_item <- rejected_order.order_items do %>
+                            <%= order_item.items.name %> (<%= order_item.quantity %>)
+                        <% end %>
+                    </td>
+                    <td><%= rejected_order.restaurantFee %></td>
+                    <td><p style="color: red;"><%= rejected_order.initialStatus %></p></td>
+                    <td>
+                        <%= if rejected_order.rejectMessage != "noMessage" do %>
+                            <%= rejected_order.rejectMessage %>
+                        <% else %>
+                            Not any message was mentioned
+                        <% end %>
+                    </td>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+    </div>
+<% end %>
+
+<%= if @cancelled_orders != [] do %>
+    <h3 style="margin-top: 30px;">Cancelled Orders</h3>
+    <div class="border"><div>
+    <div>
+        <table>
+        <thead>
+            <tr>
+                <th>Restaurant</th>
+                <th>Items</th>
+                <th>Items Fee</th>
+                <th>Delivery Address</th>
+                <th>Order made</th>
+                <th>Order estimated time</th>
+                <th>Order cancelled time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= for cancelled_order <- @cancelled_orders do %>
+                <tr>
+                    <td><%= cancelled_order.customers.name %></td>
+                    <td>
+                        <%= for order_item <- cancelled_order.order_items do %>
+                            <%= order_item.items.name %> (<%= order_item.quantity %>)
+                        <% end %>
+                    </td>
+                    <td><%= cancelled_order.restaurantFee %></td>
+                    <td><%= cancelled_order.addressTo %></td>
+                    <td><%= cancelled_order.orderTimeMade %></td>
+                    <th><%= cancelled_order.restaurantPreparationTime %></th>
+                    <th><%= cancelled_order.updated_at %></th>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+    </div>
+<% end %>

@@ -1,0 +1,36 @@
+<div>
+<%= if (@customer.orders != []) do %>
+<table class="orders-table">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Restaurant</th>
+      <th>Courier</th>
+      <th>Delivered address</th>
+      <th>Delivery Time</th>
+      <th>Ordered items</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for order <- @customer.orders do %>
+      <tr>
+        <td><%= order.id %></td>
+        <td><%= order.restaurant_id %></td>
+        <td><%= order.courier_id %></td>
+        <td><%= order.addressTo %></td>
+        <td><%= order.deliveryTime %></td>
+        <td>
+          <%= for order_item_data <- @order_items_data do %>
+            <%= if order_item_data.order_id == order.id do %>
+              <%= order_item_data.items.name %>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% else %>
+  <h2 style="text-align:center;">No orders yet.</h2>
+<% end %>
+</div>

@@ -1,0 +1,15 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <div class="container">
+      <%= @inner_content  %>
+    </div>
+  </body>
+</html>
+
+<style>
+  .container {
+    max-width: 112.0rem;
+  }
+</style>

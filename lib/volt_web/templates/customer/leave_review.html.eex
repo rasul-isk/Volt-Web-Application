@@ -1,0 +1,35 @@
+<div>
+  <h2 style="maring-top: 50px;">Leave review for your completed order<h2>
+  <%= form_for @conn, Routes.customer_path(@conn, :leave_review), [as: :review], fn review -> %>
+  <div hidden class="form-group">
+    <%= label review, :customer_id, class: "control-label" %>
+    <%= text_input review, :customer_id, value: "#{@order.customers.id}", required: :true, readonly: "readonly", id: "name", class: "form-control" %>
+  </div>
+  <div hidden class="form-group">
+    <%= label review, :restaurant_id, class: "control-label" %>
+    <%= text_input review, :restaurant_id, value: "#{@order.restaurants.id}", required: :true, id: "email", class: "form-control" %>
+  </div>
+  <div hidden class="form-group">
+    <%= label review, :order_id, :order_id, class: "control-label" %>
+    <%= text_input review, :order_id, value: "#{@order.id}", required: :true, id: "crypted_password", class: "form-control" %>
+  </div>
+    <div class="form-group">
+    <%= label review, "Rating(choose from 1 to 5)", class: "control-label" %>
+    <%= number_input review, :rating, min: 1, max: 5, required: :true, value: 1, class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label review, :body, class: "control-label" %>
+    <%= text_input review, :body, required: :true, class: "form-control", id: "review_body" %>
+  </div>
+  <div class="form-group">
+    <%= submit "Submit your review", id: "submit_button", class: "btn btn-primary" %>
+  </div>
+
+<% end %>
+</div>
+
+<style>
+  .container {
+    width: 80rem;
+  }
+</style>

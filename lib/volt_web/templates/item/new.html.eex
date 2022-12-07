@@ -1,0 +1,33 @@
+<%= form_for @conn, Routes.item_path(@conn, :create, @menu.id), [as: :item], fn item -> %>
+  <div class="form-group">
+    <%= label item, :name, class: "control-label" %>
+    <%= text_input item, :name, required: :true, id: "name", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label item, :description, class: "control-label" %>
+    <%= text_input item, :description, required: :true, id: "description", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label item, :category, class: "control-label" %>
+    <%= text_input item, :category, required: :true, id: "category", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label item, :price, class: "control-label" %>
+    <%= number_input item, :price, step: "0.01", id: "price", class: "form-control" %>
+  </div>
+  <div class="form-group" hidden>
+    <%= label item, :menu_id, class: "control-label" %>
+    <%= text_input item, :menu_id, required: :true, readonly: "readonly", value: "#{@menu.id}", id: "menu_id", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= submit "Submit", id: "submit_button", class: "btn btn-primary" %>
+  </div>
+
+<% end %>
+
+<style>
+  .container {
+    max-width: 80rem;
+  }
+</style>

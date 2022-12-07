@@ -1,0 +1,100 @@
+<%= form_for @conn, Routes.courier_path(@conn, :address_selection_process, @conn.assigns.current_user.id), [as: :session],  fn session -> %>
+<h2 style="text-align: center; margin-top: 80px;">Get current location to view available orders!</h2>
+    <div hidden class="form-group">
+        <%= text_input session, "courier_id", id: "courier_id", readonly: "readonly", class: "form-control", value: @conn.assigns.current_user.id %>
+    </div>
+
+    <div style="display: block">
+        <div class="border"></div>
+        <div class="filters">
+            <div class="form-group">
+                <div class="form-group input-div">
+                <%= text_input session, "input_value", id: "final-address", placeholder: "Loading...", class: "form-control", readonly: "true", required: "true" %>
+                </div>
+            </div>
+        </div>
+    </div>
+  <p id = "try-again" style="background-color: orange; color: white; width: 225px; text-align: center; border-radius: 10px; cursor: pointer; padding: 10px 0px;">Get my location again</p>
+
+  <div class="form-group">
+      <%= submit "View available orders", class: "btn btn-primary", id: "submit_button" %>
+  </div>
+  <p id = "test_input" style="position: absolute;color: hwb(0deg 100% 0% / 0%);background-color: white; width: 225px; text-align: center; border-radius: 10px; padding: 10px 0px;">Get my location TEST BUTTON</p>
+<% end %>
+
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&key=API-KEY"></script>
+
+<script>
+    var input_field = document.getElementById('final-address');
+    var try_again = document.getElementById('try-again');
+    var test_input = document.getElementById('test_input');
+    let geoText = '';
+
+    try_again.setAttribute("hidden", "true");
+
+    getLocation();
+
+    if(input_field.value !== "") {
+    try_again.setAttribute("hidden", "true");
+    }
+
+    input_field.addEventListener('click', () => {
+        getLocation();
+    });
+
+    test_input.addEventListener('click', () => {
+        input_field.value = "Raatuse 22, 51009 Tartu, Estonia";
+    });
+
+    function getReverseGeocodingData() {
+        let [lat,lng] = geoText.split(',')
+        var latlng = new google.maps.LatLng(lat, lng);
+        // This is making the Geocode request
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+            if (status !== google.maps.GeocoderStatus.OK) {
+                input_field.placeholder = "Something went wrong."
+                try_again.removeAttribute("hidden");
+                input_field.value = ""
+            }
+            // This is checking to see if the Geoeode Status is OK before proceeding
+            if (status == google.maps.GeocoderStatus.OK) {
+                console.log(results);
+                var address = (results[0].formatted_address);
+                geoText = address
+                input_field.value = address
+                if(input_field.value !== "") {
+                    try_again.setAttribute("hidden", "true");
+                }
+            }
+        });
+    }
+
+    function getLocation() {
+        if (geoText == '') {
+            if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(showPosition, noPosition);
+            navigator.geolocation.clearWatch(showPosition, noPosition);
+            } else {
+                input_field.placeholder = 'Geolocation is not supported by this browser.';
+            }
+        } else {
+            input_field.value = geoText;
+        }
+    }
+    function showPosition(position) {
+    if (geoText == '') {
+        geoText = position.coords.latitude + ',' + position.coords.longitude;
+        input_field.value = "";
+        input_field.placeholder = "Loading...";
+        getReverseGeocodingData();
+
+    }
+    }
+    function noPosition(position) {
+    if (geoText == '') {
+        input_field.placeholder = 'Geolocation not found.';
+        try_again.removeAttribute("hidden");
+    }
+    }
+</script>

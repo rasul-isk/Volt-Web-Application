@@ -1,0 +1,60 @@
+<%= form_for @conn, Routes.courier_path(@conn, :create), [as: :courier], fn courier -> %>
+  <div class="register-container">
+  <h2 class="register-heading">Register</h2>
+  <div class="border"></div>
+  <div class="form-group">
+    <%= label courier, :name, "Courier Name", class: "control-label" %>
+    <%= text_input courier, :name, placeholder: "Your Name", required: :true, id: "name", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label courier, :email, class: "control-label" %>
+    <%= email_input courier, :email, placeholder: "Your Email",required: :true, id: "email", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= label courier, :password, "Password", class: "control-label" %>
+    <%= password_input courier, :crypted_password,required: :true, placeholder: "Set your password", id: "crypted_password", class: "form-control" %>
+  </div>
+    <div class="form-group" hidden>
+    <%= label courier, :revenue, class: "control-label" %>
+    <%= text_input courier, :revenue,required: :true, class: "form-control", value: "0.0" %>
+  </div>
+  <div class="form-group" hidden>
+    <%= label courier, :likes, class: "control-label" %>
+    <%= text_input courier, :likes,required: :true, class: "form-control", value: "0" %>
+  </div>
+  <div class="form-group" hidden>
+    <%= label courier, :dislikes, class: "control-label" %>
+    <%= text_input courier, :dislikes,required: :true, class: "form-control", value: "0" %>
+  </div>
+
+
+  <div class="form-group">
+    <%= submit "Submit", id: "submit_button", class: "btn btn-primary" %>
+  </div>
+</div>
+<% end %>
+
+<style>
+  .container {
+    max-width: 80rem;
+  }
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+  ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: grey;
+  }
+
+  .register-container{
+    margin-top: 100px;
+  }
+  .border {
+    width: 70px;
+    height: 5px;
+    background-color: #ffc000;
+    margin-top: -15px;
+    margin-bottom: 20px;
+  }
+</style>

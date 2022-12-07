@@ -1,0 +1,65 @@
+<%= form_for @conn, Routes.customer_path(@conn, :update, @conn.assigns.current_user.id), fn customer -> %>
+  <div class="register-container">
+    <h2 class="register-heading">Update Customer Info</h2>
+    <div class="border"></div>
+    <div class="form-group">
+      <%= label customer, :name, class: "control-label" %>
+      <%= text_input customer, :name, value: "#{@conn.assigns.current_user.name}", class: "form-control", id: "name" %>
+    </div>
+    <div class="form-group">
+      <%= label customer, :email, class: "control-label" %>
+      <%= email_input customer, :email, value: "#{@conn.assigns.current_user.email}", class: "form-control", id: "email" %>
+    </div>
+    <div class="form-group">
+      <%= label customer, :dateofbirth, class: "control-label" %>
+      <%= date_input customer, :dateofbirth, value: "#{@conn.assigns.current_user.dateofbirth}", max: "2004-12-06", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= label customer, :address, class: "control-label" %>
+      <%= text_input customer, :address, value: "#{@conn.assigns.current_user.address}", class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= label customer, :cardnumber, class: "control-label" %>
+      <%= number_input customer, :cardnumber, value: "#{@conn.assigns.current_user.cardnumber}", class: "form-control", min: "1000000000000000", max: "9999999999999999", required: :true, id: "cardnumber" %>
+    </div>
+    <div class="form-group">
+      <%= label customer, :role, class: "control-label" %>
+      <%= text_input customer, :role, value: "Customer", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= submit "Update information", class: "btn btn-primary", id: "submit-button" %>
+    </div>
+  </div>
+
+  <style>
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+
+  .container {
+    max-width: 80rem;
+  }
+  ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: grey;
+  }
+  label {
+    color: black;
+  }
+  input {
+    color: black;
+  }
+  .register-container{
+    margin-top: 100px;
+  }
+  .border {
+    width: 70px;
+    height: 5px;
+    background-color: #ffc000;
+    margin-top: -15px;
+    margin-bottom: 20px;
+  }
+  </style>
+<% end %>

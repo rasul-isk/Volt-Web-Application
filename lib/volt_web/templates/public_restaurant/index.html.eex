@@ -1,0 +1,231 @@
+<span> Restaurant: </span>
+<%= @restaurant.name %>
+<br/>
+<br/>
+<br/>
+
+<table>
+  <thead>
+    <tr>
+      <th hidden>Id</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Category</th>
+      <th>Price</th>
+      <th>Amount</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+<div id="content-for-js" hidden><%= @items_ID %>|<%= @courier_fee %></div>
+<%= form_for @conn, Routes.order_path(@conn, :create_order), [as: :items],  fn items -> %>
+  <%= for item <- @menu.items do %>
+    <tr>
+      <td hidden><%= text_input items, "item_id-#{item.id}", id: "item-id", value: "#{item.id}", readonly: "readonly", class: "form-control"%></td>
+      <td><%= text_input items, "item_name-#{item.id}", id: "item-name", value: "#{item.name}", readonly: "readonly", class: "form-control"%></td>
+      <td><%= text_input items, "item_description-#{item.id}", id: "item-description", value: "#{item.description}", readonly: "readonly", class: "form-control"%></td>
+      <td><%= text_input items, "item_category-#{item.id}", id: "item-category", value: "#{item.category}", readonly: "readonly", class: "form-control" %></td>
+      <td><%= text_input items, "item_price-#{item.id}", id: "item-price-#{item.id}", value: "#{item.price}", readonly: "readonly", class: "form-control"%></td>
+      <td><%= number_input items, "item-amount-#{item.id}", id: "amount-#{item.id}", value: "0", min: "0", required: "required", style: "width: 3em; background-color: grey; color: white;", class: "form-control item-amount" %></td>
+      <td><%= text_input items, "item-total-#{item.id}", id: "item-total-#{item.id}", value: "0", readonly: "readonly", class: "form-control"%></td>
+    </tr>
+  <% end %>
+  <thead>
+    <tr>
+      <th>Total Food Price</th>
+      <th>Courier Fee</th>
+      <th>Final Order Price</th>
+    </tr>
+    <tr>
+      <td><%= text_input items, "item-total-all", id: "item-total-all", value: "0", readonly: "readonly", class: "form-control" %></td>
+      <td><%= text_input items, "item-courier-fee", id: "courier-fee", value: "0", readonly: "readonly", class: "form-control" %></td>
+      <td><%= text_input items, "item-final-fee", id: "final-fee", value: "0", readonly: "readonly", class: "form-control" %></td>
+    </tr>
+  </thead>
+  </table>
+
+<div>
+    <div class="form-group" hidden>
+      <%= text_input items, "customer_id", id: "customer_id", value: "#{@conn.assigns.current_user.id}", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "restaurant_id", id: "restaurant_id", value: "#{@restaurant.id}", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "courier_id", id: "courier_id", value: "1", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "restaurantFee", id: "restaurantFee", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "deliveryFee", id: "deliveryFee", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "addressFrom", id: "addressFrom", readonly: "readonly", class: "form-control", value: "#{@restaurant.address}" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "open_time", id: "open_time", readonly: "readonly", class: "form-control", value: "#{@restaurant.opens_at}" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "close_time", id: "close_time", readonly: "readonly", class: "form-control", value: "#{@restaurant.closes_at}" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "addressTo", id: "addressTo", readonly: "readonly", class: "form-control", value: "#{@chosen_address}" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "initialStatus", id: "initialStatus", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "isCancelled", id: "isCancelled", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "orderOverallStatus", id: "orderOverallStatus", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "orderRestaurantStatus", id: "orderRestaurantStatus", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "restaurantPreparationTime", id: "restaurantPreparationTime", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "deliveryTime", id: "deliveryTime", readonly: "readonly", class: "form-control" %>
+    </div>
+    <div class="form-group" hidden>
+      <%= text_input items, "orderTimeMade", id: "orderTimeMade", readonly: "readonly", class: "form-control" %>
+    </div>
+</div>
+
+    <%= label items, "Schedule Order", class: "control-label" %>
+    <div class="form-group">
+      <%= label items, "No", class: "control-label", style: "display: inline-flex;padding: 5px;"%>
+      <%= radio_button items, "isScheduled", false , id: "schedule-no-radio", style: "margin-right: 20px;", checked: "checked" %>
+      <%= label items, "Yes", class: "control-label", style: "display: inline-flex;padding: 5px;" %>
+      <%= radio_button items, "isScheduled", true ,  id: "schedule-yes-radio", required: "true" %>
+    </div>
+    <div class="form-group">
+    <div id = "time-input_section" hidden = "true">
+      <div class="form-group">
+        <%= label items, "scheduled_time", class: "control-label" %>
+        <%= time_select items, "scheduled_time", disabled: "true" %>
+      </div>
+    </div>
+
+    </div>
+    <div hidden class="form-group">
+      <%= text_input items, "rejectMessage", id: "rejectMessage", readonly: "readonly", class: "form-control" %>
+    </div>
+
+  <div class="form-group">
+      <p>In case of placing order, money will be withdrawn from this card:</p>
+      <%= text_input items, "cardnumber", id: "cardnumber", value: "#{@conn.assigns.current_user.cardnumber}" ,readonly: "readonly", class: "form-control", disabled: "true" %>
+  </div>
+  <div class="form-group">
+      <%= submit "Place your order", class: "btn btn-primary", id: "submit_button" %>
+  </div>
+<% end %>
+  </tbody>
+
+<div class="reviews">
+  <%= if @restaurant.reviews != nil do %>
+    <h3>Reviews from our customers</h3>
+    <%= for review <- @restaurant.reviews do %>
+      <div class="single-review">
+        <p>Rating: <%= review.rating %> out of 5</p>
+        <p>Review: <%= review.body %> </p>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+
+<script>
+  let information = document.getElementById('content-for-js').innerText.split('|')
+  let schedule_yes = document.getElementById('schedule-yes-radio')
+  let schedule_no = document.getElementById('schedule-no-radio')
+  let disabled_time_input = [document.getElementById('items_scheduled_time_hour'),document.getElementById('items_scheduled_time_minute')]
+  let time_input_section = document.getElementById("time-input_section")
+  let orderTimeMade = document.getElementById("orderTimeMade")
+
+  let items = information[0].split(',')
+  let totals = items.map(el =>`item-total-${el}`)
+
+  let courier_fee = parseFloat(information[1]) //courier-fee
+  var currentdate = new Date();
+  var datetime = currentdate.getHours() + ":" + currentdate.getMinutes();
+
+  document.getElementById('courier-fee').value = information[1] //courier-fee
+  document.getElementById('deliveryFee').value = information[1] //courier-fee
+  document.getElementById('restaurantFee').value = 0;
+  document.getElementById('final-fee').value = information[1]
+  orderTimeMade.value = chooseTime(disabled_time_input[0].value,disabled_time_input[1].value,datetime)
+
+
+
+  for(let itr = 0; itr < items.length; itr++) {
+    document.getElementById(`amount-${items[itr]}`).addEventListener('change', () => {updateFields(items[itr])});
+    updateFields(items[itr])
+  }
+
+  schedule_yes.addEventListener('click', () => {
+    time_input_section.removeAttribute("hidden");
+    disabled_time_input[0].removeAttribute("disabled");
+    disabled_time_input[1].removeAttribute("disabled");
+
+    orderTimeMade.value = chooseTime(disabled_time_input[0].value,disabled_time_input[1].value,datetime)
+  })
+  schedule_no.addEventListener('click', () => {
+    time_input_section.setAttribute("hidden","true");
+    disabled_time_input[0].setAttribute("disabled","true");
+    disabled_time_input[1].setAttribute("disabled","true");
+
+    orderTimeMade.value = chooseTime(disabled_time_input[0].value,disabled_time_input[1].value,datetime)
+  })
+
+  disabled_time_input[0].addEventListener('click', () => {
+    orderTimeMade.value = chooseTime(disabled_time_input[0].value,disabled_time_input[1].value,datetime)
+  })
+  disabled_time_input[1].addEventListener('click', () => {
+    orderTimeMade.value = chooseTime(disabled_time_input[0].value,disabled_time_input[1].value,datetime)
+  })
+
+  function chooseTime(h,m,cur) {
+    var formattedNumber = ("0" + h).slice(-2) + ":" + ("0" + m).slice(-2);
+    return (schedule_yes.checked) ?  formattedNumber : cur
+  }
+
+  function updateFields (item_name) {
+    let current_price = document.getElementById(`item-price-${item_name}`).value;
+    let current_amount = document.getElementById(`amount-${item_name}`).value;
+    console.log(current_amount)
+    let total_item_price = document.getElementById(`item-total-${item_name}`).value;
+    document.getElementById(`item-total-${item_name}`).value = current_amount * current_price;
+    total_for_items = totals.map(x => document.getElementById(x).value).reduce((prev,cur) => parseFloat(prev) + parseFloat(cur),0);
+    total_order_price = total_for_items + courier_fee;
+    document.getElementById('item-total-all').value = Math.round((total_for_items + Number.EPSILON) * 100) / 100;
+    document.getElementById(`restaurantFee`).value = Math.round((total_for_items + Number.EPSILON) * 100) / 100;
+    document.getElementById('final-fee').value = Math.round((total_order_price + Number.EPSILON) * 100) / 100;
+  }
+</script>
+
+
+<style>
+  input[type=number]::-webkit-inner-spin-button {
+    opacity: 1;
+  }
+  input {
+    color: black;
+    font-size: 20px;
+  }
+
+  .reviews {
+    margin-top: 50px;
+    margin-bottom: 100px;
+  }
+
+  .single-review {
+    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, .1), 0 4px 11px 0 rgba(0, 0, 0, .08);
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+  }
+</style>
